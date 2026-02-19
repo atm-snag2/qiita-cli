@@ -15,6 +15,15 @@ jest.mock(
   { virtual: true },
 );
 
+// Under --experimental-vm-modules, import() resolves through the ESM loader,
+// which ignores jest.mock(), so register the same stub there too.
+// @types/jest does not declare unstable_mockModule.
+(
+  jest as typeof jest & { unstable_mockModule: typeof jest.mock }
+).unstable_mockModule("chokidar", () => ({
+  default: { watch: (...args: unknown[]) => mockWatch(...args) },
+}));
+
 describe("startLocalChangeWatcher", () => {
   beforeEach(() => {
     mockWatch.mockReset();
