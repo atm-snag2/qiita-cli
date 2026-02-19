@@ -9,6 +9,8 @@ COMMAND:
   publish <basename> ...  記事を投稿、更新
   publish --all           全ての記事を投稿、更新
   pull                    記事ファイルをQiitaと同期
+  search <query>          Qiitaの記事を検索
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 
