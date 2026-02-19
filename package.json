@@ -69,7 +69,7 @@
     "lint:typecheck": "tsc --noEmit",
     "prepare": "husky",
     "qiita": "node dist/main.js",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
     "arg": "^5.0.2",
