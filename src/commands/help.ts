@@ -11,6 +11,8 @@ COMMAND:
   pull                    記事ファイルをQiitaと同期
   search <query>          Qiitaの記事を検索
     --json                結果をJSON形式で出力
+  get <article_id>        指定したIDの記事を取得
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 

@@ -9,6 +9,7 @@ import { publish } from "./publish";
 import { pull } from "./pull";
 import { version } from "./version";
 import { search } from "./search";
+import { get } from "./get";
 
 export const exec = async (commandName: string, commandArgs: string[]) => {
   const commands = {
@@ -21,6 +22,7 @@ export const exec = async (commandName: string, commandArgs: string[]) => {
     help,
     version,
     search,
+    get,
     "--help": help,
     "--version": version,
   };
