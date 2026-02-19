@@ -317,6 +317,11 @@ export class QiitaApi {
     return await this.get<PostingCampaign>(path);
   }
 
+  async getItem(id: string) {
+    const path = `/api/v2/items/${id}`;
+    return await this.get<Item>(path);
+  }
+
   async getAssetUrls() {
     return await this.get<{ [key: string]: string }>("/api/qiita-cli/assets");
   }

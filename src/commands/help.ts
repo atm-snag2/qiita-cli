@@ -12,6 +12,8 @@ COMMAND:
   posting-campaigns       開催中の記事投稿キャンペーン一覧を表示（最大100件）
   search <query>          Qiitaの記事を検索
     --json                結果をJSON形式で出力
+  get <article_id>        指定したIDの記事を取得
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 
