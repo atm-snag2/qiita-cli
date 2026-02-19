@@ -12,6 +12,8 @@ COMMAND:
   publish --all           全ての記事、スライドを投稿、更新
   pull                    記事、スライドファイルをQiitaと同期
   posting-campaigns       開催中の記事投稿キャンペーン一覧を表示（最大100件）
+  search <query>          Qiitaの記事を検索
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 
