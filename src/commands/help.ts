@@ -13,6 +13,15 @@ COMMAND:
     --json                結果をJSON形式で出力
   get <article_id>        指定したIDの記事を取得
     --json                結果をJSON形式で出力
+  post [options]          記事を直接投稿、更新
+    --id <id>             既存記事を更新する場合に指定
+    --title <title>       記事のタイトル
+    --tags <tags>         カンマ区切りのタグ
+    --body <body>         記事本文 (未指定時は標準入力)
+    --private             限定共有にする場合に指定
+    --organization <org>  組織に紐付ける場合に指定
+    --slide               スライドモードを有効化
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 
