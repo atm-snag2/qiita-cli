@@ -89,6 +89,7 @@ describe("publish", () => {
 
   const buildResponseItem = (overrides: Partial<Item> = {}): Item => ({
     id: "new-item-id",
+    url: "https://qiita.com/Qiita/items/new-item-id",
     title: "Title",
     body: "# Title",
     tags: [{ name: "qiita" }],
