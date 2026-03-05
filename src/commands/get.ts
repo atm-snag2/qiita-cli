@@ -29,9 +29,7 @@ export const get = async (argv: string[]) => {
             id: item.id,
             title: item.title,
             body: item.body,
-            url: `https://${qiitaApi.getDomainName()}/${
-              item.organization_url_name || "users"
-            }${item.organization_url_name ? "/items" : ""}/${item.id}`,
+            url: item.url,
             organization_url_name: item.organization_url_name,
             private: item.private,
             tags: item.tags.map((tag) => tag.name),
@@ -44,12 +42,7 @@ export const get = async (argv: string[]) => {
     } else {
       console.log(chalk.bold("Title:"), item.title);
       console.log(chalk.bold("ID:"), item.id);
-      console.log(
-        chalk.bold("URL:"),
-        `https://${qiitaApi.getDomainName()}/${
-          item.organization_url_name || "users"
-        }${item.organization_url_name ? "/items" : ""}/${item.id}`,
-      );
+      console.log(chalk.bold("URL:"), item.url);
       console.log(chalk.bold("Private:"), item.private);
       console.log(
         chalk.bold("Tags:"),
