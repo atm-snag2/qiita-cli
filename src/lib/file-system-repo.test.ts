@@ -288,6 +288,7 @@ slide: false
     const item: Item = {
       body: "test",
       id,
+      url: "https://qiita.com/user/items/this_is_id",
       private: false,
       coediting: false,
       tags: [],

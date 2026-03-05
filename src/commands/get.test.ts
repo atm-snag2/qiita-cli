@@ -14,6 +14,7 @@ describe("get", () => {
   const mockItem: Item = {
     body: "## Mock Article Body",
     id: "mock_article_id",
+    url: "https://qiita.com/mock_user/items/mock_article_id",
     private: false,
     tags: [{ name: "mocktag" }],
     title: "Mock Article Title",
@@ -59,10 +60,7 @@ describe("get", () => {
     expect(mockQiitaApi.getItem).toHaveBeenCalledWith("mock_article_id");
     expect(consoleLogSpy).toHaveBeenCalledWith("Title:", mockItem.title);
     expect(consoleLogSpy).toHaveBeenCalledWith("ID:", mockItem.id);
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "URL:",
-      `https://qiita.com/users/${mockItem.id}`,
-    );
+    expect(consoleLogSpy).toHaveBeenCalledWith("URL:", mockItem.url);
     expect(consoleLogSpy).toHaveBeenCalledWith("Private:", mockItem.private);
     expect(consoleLogSpy).toHaveBeenCalledWith("Tags:", mockItem.tags[0].name);
     expect(consoleLogSpy).toHaveBeenCalledWith(`
@@ -83,7 +81,7 @@ describe("get", () => {
           id: mockItem.id,
           title: mockItem.title,
           body: mockItem.body,
-          url: `https://qiita.com/users/${mockItem.id}`,
+          url: mockItem.url,
           organization_url_name: mockItem.organization_url_name,
           private: mockItem.private,
           tags: mockItem.tags.map((tag) => tag.name),

@@ -52,6 +52,7 @@ describe("search", () => {
       {
         body: "Mock body 1",
         id: "123",
+        url: "https://qiita.com/user1/items/123",
         private: false,
         tags: [{ name: "tag1" }],
         title: "Test Article 1",
@@ -64,6 +65,7 @@ describe("search", () => {
       {
         body: "Mock body 2",
         id: "456",
+        url: "https://qiita.com/user2/items/456",
         private: false,
         tags: [{ name: "tag2" }],
         title: "Test Article 2",
@@ -84,12 +86,12 @@ describe("search", () => {
     expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "Test Article 1");
     expect(consoleLogSpy).toHaveBeenNthCalledWith(
       2,
-      "  https://qiita.com/users/123",
+      "  https://qiita.com/user1/items/123",
     );
     expect(consoleLogSpy).toHaveBeenNthCalledWith(3, "Test Article 2");
     expect(consoleLogSpy).toHaveBeenNthCalledWith(
       4,
-      "  https://qiita.com/test_org/items/456",
+      "  https://qiita.com/user2/items/456",
     );
   });
 
@@ -99,5 +101,42 @@ describe("search", () => {
     await search(["--page", "2", "--per-page", "50", "nextjs"]);
 
     expect(mockQiitaApi.items).toHaveBeenCalledWith(2, 50, "nextjs");
+  });
+
+  it("検索結果をJSON形式で表示する", async () => {
+    const mockItems = [
+      {
+        body: "Mock body 1",
+        id: "123",
+        url: "https://qiita.com/user1/items/123",
+        private: false,
+        tags: [{ name: "tag1" }],
+        title: "Test Article 1",
+        organization_url_name: null,
+        coediting: false,
+        created_at: "2023-01-01T00:00:00Z",
+        updated_at: "2023-01-01T00:00:00Z",
+        slide: false,
+      },
+    ];
+
+    mockQiitaApi.items.mockResolvedValueOnce(mockItems);
+
+    await search(["react", "--json"]);
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      JSON.stringify(
+        [
+          {
+            id: mockItems[0].id,
+            title: mockItems[0].title,
+            url: mockItems[0].url,
+            organization_url_name: mockItems[0].organization_url_name,
+          },
+        ],
+        null,
+        2,
+      ),
+    );
   });
 });
