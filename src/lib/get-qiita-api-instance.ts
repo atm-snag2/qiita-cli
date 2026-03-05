@@ -4,18 +4,21 @@ import { PackageSettings } from "./package-settings";
 
 let qiitaApi: QiitaApi;
 
-export const getQiitaApiInstance = async (options?: { token?: string }) => {
+export const getQiitaApiInstance = async (options?: {
+  token?: string;
+  domain?: string;
+}) => {
   if (!qiitaApi) {
+    const credential =
+      options?.token != null ? undefined : await config.getCredential();
     qiitaApi = new QiitaApi({
-      token: await accessToken(options),
+      token: options?.token ?? credential!.accessToken,
       userAgent: userAgent(),
+      domain: options?.domain ?? credential?.domain,
     });
   }
   return qiitaApi;
 };
-
-const accessToken = async (options?: { token?: string }) =>
-  options?.token ?? (await config.getCredential()).accessToken;
 
 const userAgent = () => {
   return `${PackageSettings.userAgentName}/${PackageSettings.version}`;

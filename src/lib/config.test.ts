@@ -293,6 +293,11 @@ describe("config", () => {
       name: "test-credential",
       accessToken: "TEST_TOKEN",
     };
+    const newCredentialWithDomain = {
+      name: "test-credential-with-domain",
+      accessToken: "TEST_TOKEN",
+      domain: "test.qiita.com",
+    };
 
     beforeEach(() => {
       config.load({});
@@ -321,6 +326,16 @@ describe("config", () => {
         expect(newCredentialData).toStrictEqual({
           ...credentialData,
           credentials: [...credentialData.credentials, newCredential],
+        });
+      });
+
+      it("appends new credential with domain", async () => {
+        await config.setCredential(newCredentialWithDomain);
+
+        const newCredentialData = JSON.parse(getFile(credentialFilePath)!);
+        expect(newCredentialData).toStrictEqual({
+          ...credentialData,
+          credentials: [...credentialData.credentials, newCredentialWithDomain],
         });
       });
     });
