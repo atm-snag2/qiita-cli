@@ -105,7 +105,7 @@ export const post = async (argv: string[]) => {
     if (outputJson) {
       console.log(JSON.stringify(responseItem, null, 2));
     } else {
-      const url = `https://qiita.com/${
+      const url = `https://${qiitaApi.getDomainName()}/${
         responseItem.organization_url_name || "users"
       }${responseItem.organization_url_name ? "/items" : ""}/${responseItem.id}`;
       console.log(chalk.cyan(url));
