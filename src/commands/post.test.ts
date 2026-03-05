@@ -30,6 +30,7 @@ describe("post", () => {
       getItem: jest.fn(),
       postItem: jest.fn(),
       patchItem: jest.fn(),
+      getDomainName: jest.fn().mockReturnValue("qiita.com"),
     } as Partial<jest.Mocked<QiitaApi>> as jest.Mocked<QiitaApi>;
     mockGetQiitaApiInstance.mockReturnValue(Promise.resolve(mockQiitaApi));
 

@@ -43,9 +43,9 @@ export const search = async (argv: string[]) => {
         items.map((item) => ({
           id: item.id,
           title: item.title,
-          url: `https://qiita.com/${item.organization_url_name || "users"}${
-            item.organization_url_name ? "/items" : ""
-          }/${item.id}`,
+          url: `https://${qiitaApi.getDomainName()}/${
+            item.organization_url_name || "users"
+          }${item.organization_url_name ? "/items" : ""}/${item.id}`,
           organization_url_name: item.organization_url_name,
           // Add other fields if needed for AI consumption
         })),
@@ -61,7 +61,9 @@ export const search = async (argv: string[]) => {
       const pathSegment = item.organization_url_name
         ? `/${userOrOrg}/items`
         : `/${userOrOrg}`;
-      console.log(`  https://qiita.com${pathSegment}/${item.id}`);
+      console.log(
+        `  https://${qiitaApi.getDomainName()}${pathSegment}/${item.id}`,
+      );
     });
   }
 };
