@@ -2,6 +2,7 @@
  * @type import('jest').Config
  */
 const config = {
+  setupFiles: ["./jest.setup.js"],
   roots: ["src"],
   testMatch: ["**/*.test.(ts|tsx)"],
   transform: {
