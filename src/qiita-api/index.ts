@@ -31,13 +31,23 @@ export interface Item {
 export class QiitaApi {
   private readonly token: string;
   private readonly userAgent: string;
+  private readonly domain?: string;
 
   static agentName = "QiitaApi";
   static version = "0.0.1";
 
-  constructor({ token, userAgent }: { token: string; userAgent?: string }) {
+  constructor({
+    token,
+    userAgent,
+    domain,
+  }: {
+    token: string;
+    userAgent?: string;
+    domain?: string;
+  }) {
     this.token = token;
     this.userAgent = userAgent ? userAgent : QiitaApi.defaultUserAgent();
+    this.domain = domain;
   }
 
   static defaultUserAgent() {
@@ -48,7 +58,10 @@ export class QiitaApi {
     return "https";
   }
 
-  private getDomainName() {
+  public getDomainName() {
+    if (this.domain) {
+      return this.domain;
+    }
     return process.env.QIITA_DOMAIN ? process.env.QIITA_DOMAIN : "qiita.com";
   }
 

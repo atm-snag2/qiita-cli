@@ -98,6 +98,13 @@ class Config {
     return this.credential.getCredential();
   }
 
+  async getProfileName() {
+    if (!this.credential) {
+      throw new Error("credential is undefined");
+    }
+    return await this.credential.getProfileName();
+  }
+
   setCredential(credential: CredentialItem) {
     if (!this.credential) {
       throw new Error("credential is undefined");
@@ -187,6 +194,7 @@ interface CredentialData {
 interface CredentialItem {
   accessToken: string;
   name: string;
+  domain?: string;
 }
 
 /**
@@ -255,6 +263,19 @@ class Credential {
     this.cache = null;
   }
 
+  async getProfileName() {
+    if (this.currentProfile) {
+      return this.currentProfile;
+    }
+
+    try {
+      const credentialData = await this.load();
+      return credentialData.default;
+    } catch {
+      return "qiita";
+    }
+  }
+
   async getCredential() {
     const credentialData = await this.load();
 
@@ -266,9 +287,7 @@ class Credential {
     );
 
     if (!credential) {
-      console.error("CredentialError:");
-      console.error(`  profile is not exists '${profile}'`);
-      process.exit(1);
+      throw new Error(`profile is not exists '${profile}'`);
     }
 
     configDebugger(

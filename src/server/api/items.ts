@@ -84,7 +84,7 @@ const itemsShow = async (req: Express.Request, res: Express.Response) => {
 
   const currentUser = await getCurrentUser();
   const qiitaItemUrl = published
-    ? itemUrl({
+    ? await itemUrl({
         id: item.id!,
         userId: currentUser.id,
         secret: item.secret,
