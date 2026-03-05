@@ -17,6 +17,7 @@ export * from "./errors";
 export interface Item {
   body: string;
   id: string;
+  url: string;
   private: boolean;
   tags: {
     name: string;

@@ -15,6 +15,7 @@ describe("post", () => {
   const mockItem: Item = {
     body: "Mock Body",
     id: "mock_id",
+    url: "https://qiita.com/mock_user/items/mock_id",
     private: true,
     tags: [{ name: "test" }],
     title: "Mock Title",
@@ -99,13 +100,8 @@ describe("post", () => {
       organizationUrlName: null,
       slide: false,
     });
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "https://qiita.com/users/mock_id",
-    );
+    expect(consoleLogSpy).toHaveBeenCalledWith(mockItem.url);
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      "https://qiita.com/users/mock_id",
-    );
   });
 
   it("更新：正常に記事を更新できる", async () => {
@@ -129,7 +125,7 @@ describe("post", () => {
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy).toHaveBeenCalledWith(
-      "https://qiita.com/users/mock_id",
+      "https://qiita.com/mock_user/items/mock_id",
     );
   });
 

@@ -43,9 +43,7 @@ export const search = async (argv: string[]) => {
         items.map((item) => ({
           id: item.id,
           title: item.title,
-          url: `https://${qiitaApi.getDomainName()}/${
-            item.organization_url_name || "users"
-          }${item.organization_url_name ? "/items" : ""}/${item.id}`,
+          url: item.url,
           organization_url_name: item.organization_url_name,
           // Add other fields if needed for AI consumption
         })),
@@ -56,14 +54,8 @@ export const search = async (argv: string[]) => {
   } else {
     // Original human-readable output
     items.forEach((item) => {
-      const userOrOrg = item.organization_url_name || "users"; // Fallback to 'users' if organization_url_name is null
       console.log(`${chalk.bold(item.title)}`); // <--- chalk.bold is re-inserted here
-      const pathSegment = item.organization_url_name
-        ? `/${userOrOrg}/items`
-        : `/${userOrOrg}`;
-      console.log(
-        `  https://${qiitaApi.getDomainName()}${pathSegment}/${item.id}`,
-      );
+      console.log(`  ${item.url}`);
     });
   }
 };
