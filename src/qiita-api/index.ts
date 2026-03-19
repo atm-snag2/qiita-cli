@@ -13,6 +13,18 @@ import { qiitaApiDebugger } from "./lib/debugger";
 
 export * from "./errors";
 
+export interface Comment {
+  id: string;
+  body: string;
+  rendered_body: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface Item {
   body: string;
   id: string;
@@ -164,6 +176,14 @@ export class QiitaApi {
     });
   }
 
+  private async delete<T = unknown>(path: string, options?: RequestInit) {
+    const url = this.generateApiUrl(path);
+    return await this.request<T>(url, {
+      ...options,
+      method: "DELETE",
+    });
+  }
+
   async authenticatedUser() {
     return await this.get<{ id: string }>("/api/v2/authenticated_user");
   }
@@ -287,6 +307,35 @@ export class QiitaApi {
   async getItem(id: string) {
     const path = `/api/v2/items/${id}`;
     return await this.get<Item>(path);
+  }
+
+  async getItemComments(itemId: string) {
+    const path = `/api/v2/items/${itemId}/comments`;
+    return await this.get<Comment[]>(path);
+  }
+
+  async getComment(commentId: string) {
+    const path = `/api/v2/comments/${commentId}`;
+    return await this.get<Comment>(path);
+  }
+
+  async postComment(itemId: string, body: string) {
+    const path = `/api/v2/items/${itemId}/comments`;
+    return await this.post<Comment>(path, {
+      body: JSON.stringify({ body }),
+    });
+  }
+
+  async patchComment(commentId: string, body: string) {
+    const path = `/api/v2/comments/${commentId}`;
+    return await this.patch<Comment>(path, {
+      body: JSON.stringify({ body }),
+    });
+  }
+
+  async deleteComment(commentId: string) {
+    const path = `/api/v2/comments/${commentId}`;
+    return await this.delete(path);
   }
 
   async getAssetUrls() {

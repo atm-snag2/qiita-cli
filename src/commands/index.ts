@@ -11,6 +11,7 @@ import { version } from "./version";
 import { search } from "./search";
 import { get } from "./get";
 import { post } from "./post";
+import { comment } from "./comment";
 
 export const exec = async (commandName: string, commandArgs: string[]) => {
   const commands = {
@@ -25,6 +26,7 @@ export const exec = async (commandName: string, commandArgs: string[]) => {
     search,
     get,
     post,
+    comment,
     "--help": help,
     "--version": version,
   };
