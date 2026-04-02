@@ -122,10 +122,34 @@ describe("post", () => {
       isPrivate: mockItem.private,
       organizationUrlName: mockItem.organization_url_name,
       slide: mockItem.slide,
+      commitMessage: undefined,
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "https://qiita.com/mock_user/items/mock_id",
+    );
+  });
+
+  it("更新：--commit-messageを指定できる", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce({
+      ...mockItem,
+      body: "Updated Body",
+    });
+
+    await post([
+      "--id",
+      "mock_id",
+      "--body",
+      "Updated Body",
+      "--commit-message",
+      "コメント機能を追加",
+    ]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        commitMessage: "コメント機能を追加",
+      }),
     );
   });
 

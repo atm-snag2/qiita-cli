@@ -274,6 +274,7 @@ export class QiitaApi {
     isPrivate,
     organizationUrlName,
     slide,
+    commitMessage,
   }: {
     uuid: string;
     rawBody: string;
@@ -282,8 +283,9 @@ export class QiitaApi {
     isPrivate: boolean;
     organizationUrlName: string | null;
     slide: boolean;
+    commitMessage?: string;
   }) {
-    const data = JSON.stringify({
+    const payload: Record<string, unknown> = {
       body: rawBody,
       title,
       tags: tags.map((name) => {
@@ -295,7 +297,11 @@ export class QiitaApi {
       private: isPrivate,
       organization_url_name: organizationUrlName,
       slide,
-    });
+    };
+    if (commitMessage !== undefined) {
+      payload.commit_message = commitMessage;
+    }
+    const data = JSON.stringify(payload);
 
     const path = `/api/v2/items/${uuid}`;
 
