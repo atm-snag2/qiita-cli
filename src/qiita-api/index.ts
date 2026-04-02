@@ -297,6 +297,7 @@ export class QiitaApi {
     slide,
     postingCampaignUuid,
     agreedPostingCampaignTerm,
+    commitMessage,
   }: {
     uuid: string;
     rawBody: string;
@@ -307,8 +308,9 @@ export class QiitaApi {
     slide: boolean;
     postingCampaignUuid: string | null | undefined;
     agreedPostingCampaignTerm: boolean | undefined;
+    commitMessage?: string;
   }) {
-    const data = JSON.stringify({
+    const payload: Record<string, unknown> = {
       body: rawBody,
       title,
       tags: tags.map((name) => {
@@ -322,7 +324,11 @@ export class QiitaApi {
       slide,
       posting_campaign_uuid: postingCampaignUuid,
       agreed_posting_campaign_term: agreedPostingCampaignTerm,
-    });
+    };
+    if (commitMessage !== undefined) {
+      payload.commit_message = commitMessage;
+    }
+    const data = JSON.stringify(payload);
 
     const path = `/api/v2/items/${uuid}`;
 
