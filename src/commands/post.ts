@@ -10,10 +10,11 @@ export const post = async (argv: string[]) => {
       "--id": String,
       "--title": String,
       "--tags": String,
-      "--private": Boolean,
+      "--private": String,
       "--body": String,
       "--organization": String,
       "--slide": Boolean,
+      "--commit-message": String,
       "--json": Boolean,
     },
     { argv, permissive: true },
@@ -23,9 +24,15 @@ export const post = async (argv: string[]) => {
   let body = args["--body"];
   const title = args["--title"];
   const tagsStr = args["--tags"];
-  const isPrivate = args["--private"];
+  const isPrivate =
+    args["--private"] === "true"
+      ? true
+      : args["--private"] === "false"
+        ? false
+        : undefined;
   const organizationUrlName = args["--organization"];
   const slide = args["--slide"];
+  const commitMessage = args["--commit-message"];
   const outputJson = args["--json"] || false;
 
   // Read from stdin if body is not provided and stdin is not a TTY
@@ -72,6 +79,7 @@ export const post = async (argv: string[]) => {
             ? organizationUrlName
             : existingItem.organization_url_name,
         slide: slide !== undefined ? slide : existingItem.slide,
+        commitMessage,
       });
 
       if (!outputJson) {

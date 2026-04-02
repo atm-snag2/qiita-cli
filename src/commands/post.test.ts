@@ -122,10 +122,92 @@ describe("post", () => {
       isPrivate: mockItem.private,
       organizationUrlName: mockItem.organization_url_name,
       slide: mockItem.slide,
+      commitMessage: undefined,
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "https://qiita.com/mock_user/items/mock_id",
+    );
+  });
+
+  it("新規作成：--private false で公開記事を作成できる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: false,
+    });
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--private",
+      "false",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({ isPrivate: false }),
+    );
+  });
+
+  it("新規作成：--private true で限定共有記事を作成できる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce(mockItem);
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--private",
+      "true",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({ isPrivate: true }),
+    );
+  });
+
+  it("新規作成：--private 未指定の場合、デフォルトで限定共有になる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce(mockItem);
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({ isPrivate: true }),
+    );
+  });
+
+  it("更新：--commit-messageを指定できる", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce({
+      ...mockItem,
+      body: "Updated Body",
+    });
+
+    await post([
+      "--id",
+      "mock_id",
+      "--body",
+      "Updated Body",
+      "--commit-message",
+      "コメント機能を追加",
+    ]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        commitMessage: "コメント機能を追加",
+      }),
     );
   });
 
