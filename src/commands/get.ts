@@ -32,8 +32,11 @@ export const get = async (argv: string[]) => {
             url: item.url,
             organization_url_name: item.organization_url_name,
             private: item.private,
-            tags: item.tags.map((tag) => tag.name),
-            // Add other fields as needed
+            tags: item.tags,
+            coediting: item.coediting,
+            slide: item.slide,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
           },
           null,
           2,
