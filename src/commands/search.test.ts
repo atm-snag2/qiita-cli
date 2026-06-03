@@ -131,6 +131,7 @@ describe("search", () => {
             id: mockItems[0].id,
             title: mockItems[0].title,
             url: mockItems[0].url,
+            tags: mockItems[0].tags.map((t) => t.name),
             organization_url_name: mockItems[0].organization_url_name,
           },
         ],
