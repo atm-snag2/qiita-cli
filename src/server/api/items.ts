@@ -18,7 +18,7 @@ const fetchPostingCampaign = async (
   uuid: string,
 ): Promise<PostingCampaign | null> => {
   try {
-    return await qiitaApi.postingCampaign(uuid);
+    return await qiitaApi.getPostingCampaign(uuid);
   } catch {
     return null;
   }

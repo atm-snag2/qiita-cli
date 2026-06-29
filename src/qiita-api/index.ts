@@ -26,6 +26,17 @@ export interface Comment {
   };
 }
 
+export interface PostingCampaign {
+  uuid: string;
+  title: string;
+  banner_url: string;
+  link_url: string;
+  term_url: string | null;
+  start_at: string;
+  end_at: string;
+  is_after_end: boolean;
+}
+
 export interface Item {
   body: string;
   id: string;
@@ -41,17 +52,6 @@ export interface Item {
   updated_at: string;
   slide: boolean;
   posting_campaign_uuid: string | null;
-}
-
-export interface PostingCampaign {
-  uuid: string;
-  title: string;
-  banner_url: string | null;
-  link_url: string;
-  term_url: string;
-  start_at: string;
-  end_at: string;
-  is_after_end: boolean;
 }
 
 export class QiitaApi {
@@ -303,8 +303,6 @@ export class QiitaApi {
     postingCampaignUuid,
     agreedPostingCampaignTerm,
     commitMessage,
-    postingCampaignUuid,
-    agreedPostingCampaignTerm,
   }: {
     uuid: string;
     rawBody: string;
@@ -316,8 +314,6 @@ export class QiitaApi {
     postingCampaignUuid?: string | null;
     agreedPostingCampaignTerm?: boolean;
     commitMessage?: string;
-    postingCampaignUuid?: string | null;
-    agreedPostingCampaignTerm?: boolean;
   }) {
     const payload: Record<string, unknown> = {
       body: rawBody,
@@ -331,8 +327,6 @@ export class QiitaApi {
       private: isPrivate,
       organization_url_name: organizationUrlName,
       slide,
-      posting_campaign_uuid: postingCampaignUuid,
-      agreed_posting_campaign_term: agreedPostingCampaignTerm,
     };
     if (commitMessage !== undefined) {
       payload.commit_message = commitMessage;
@@ -352,7 +346,7 @@ export class QiitaApi {
     });
   }
 
-  async postingCampaigns(page?: number, per?: number) {
+  async getPostingCampaigns(page?: number, per?: number) {
     const params = new URLSearchParams();
     if (page !== undefined) {
       params.set("page", page.toString());
@@ -366,7 +360,7 @@ export class QiitaApi {
     return await this.get<PostingCampaign[]>(path);
   }
 
-  async postingCampaign(uuid: string) {
+  async getPostingCampaign(uuid: string) {
     const path = `/api/v2/posting-campaigns/${uuid}`;
 
     return await this.get<PostingCampaign>(path);

@@ -104,23 +104,6 @@ const checkId: CheckType = {
   },
 };
 
-const checkPostingCampaignUuid: CheckType = {
-  getMessage: () => "posting_campaign_uuidは文字列で入力してください",
-  isValid: ({ postingCampaignUuid }) => {
-    return (
-      postingCampaignUuid === null || typeof postingCampaignUuid === "string"
-    );
-  },
-};
-
-const checkAgreedPostingCampaignTerm: CheckType = {
-  getMessage: () =>
-    "agreed_posting_campaign_termの設定はtrue/falseで入力してください",
-  isValid: ({ agreedPostingCampaignTerm }) => {
-    return typeof agreedPostingCampaignTerm === "boolean";
-  },
-};
-
 const getErrorMessages = (
   frontMatter: FrontMatter,
   checkTypes: CheckType[],

@@ -601,7 +601,7 @@ slide: false
   });
 
   describe("saveItem() with posting campaign", () => {
-    it("writes posting_campaign_uuid from Item response and resets agreed_posting_campaign_term to false", async () => {
+    it("writes posting_campaign_uuid from Item response and sets agreed_posting_campaign_term to true", async () => {
       const dataRootDir = "data_root_dir";
       const instance = new FileSystemRepo({ dataRootDir });
       const id = "this_is_id";
@@ -638,7 +638,7 @@ tags: []
         "posting_campaign_uuid: 910c5be7d2d6a043a12b",
       );
       expect(remoteWrite![1] as string).toContain(
-        "agreed_posting_campaign_term: false",
+        "agreed_posting_campaign_term: true",
       );
     });
   });

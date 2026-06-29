@@ -196,4 +196,39 @@ describe("QiitaApi", () => {
       expect(sentBody.agreed_posting_campaign_term).toBe(true);
     });
   });
+
+  describe("getPostingCampaigns", () => {
+    const mockCampaigns = [
+      {
+        uuid: "910c5be7d2d6a043a12b",
+        title: "Test Campaign",
+        banner_url: "https://example.com/banner.jpg",
+        link_url: "https://qiita.com/official-events/910c5be7d2d6a043a12b",
+        term_url: null,
+        start_at: "2026-06-01T10:00:00+09:00",
+        end_at: "2026-07-13T23:59:59+09:00",
+        is_after_end: false,
+      },
+    ];
+
+    it("/api/v2/posting-campaigns に GET リクエストを送る", async () => {
+      mockFetch(mockCampaigns);
+      const api = makeApi();
+
+      await api.getPostingCampaigns();
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/posting-campaigns");
+      expect(options.method).toBe("GET");
+    });
+
+    it("API レスポンスを配列で返す", async () => {
+      mockFetch(mockCampaigns);
+      const api = makeApi();
+
+      const result = await api.getPostingCampaigns();
+
+      expect(result).toEqual(mockCampaigns);
+    });
+  });
 });
