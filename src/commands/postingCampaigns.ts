@@ -1,3 +1,4 @@
+import arg from "arg";
 import { getQiitaApiInstance } from "../lib/get-qiita-api-instance";
 import { PostingCampaign } from "../qiita-api";
 
@@ -21,16 +22,34 @@ const isOngoing = (campaign: PostingCampaign) => {
   return startAt <= now;
 };
 
-export const postingCampaigns = async () => {
+export const postingCampaigns = async (argv: string[]) => {
   const chalk = (await import("chalk")).default;
+  const args = arg(
+    {
+      "--json": Boolean,
+    },
+    { argv, permissive: true },
+  );
+
+  const outputJson = args["--json"] || false;
+
   const qiitaApi = await getQiitaApiInstance();
 
-  const campaigns = (await qiitaApi.postingCampaigns(1, PER_PAGE)).filter(
+  const campaigns = (await qiitaApi.getPostingCampaigns(1, PER_PAGE)).filter(
     isOngoing,
   );
 
   if (campaigns.length === 0) {
-    console.log("開催中の記事投稿キャンペーンはありません");
+    if (outputJson) {
+      console.log(JSON.stringify([]));
+    } else {
+      console.log("開催中の記事投稿キャンペーンはありません");
+    }
+    return;
+  }
+
+  if (outputJson) {
+    console.log(JSON.stringify(campaigns, null, 2));
     return;
   }
 

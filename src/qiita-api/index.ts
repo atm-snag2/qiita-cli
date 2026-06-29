@@ -458,7 +458,7 @@ export class QiitaApi {
     });
   }
 
-  async postingCampaigns(page?: number, per?: number) {
+  async getPostingCampaigns(page?: number, per?: number) {
     const params = new URLSearchParams();
     if (page !== undefined) {
       params.set("page", page.toString());
@@ -472,7 +472,7 @@ export class QiitaApi {
     return await this.get<PostingCampaign[]>(path);
   }
 
-  async postingCampaign(uuid: string) {
+  async getPostingCampaign(uuid: string) {
     const path = `/api/v2/posting-campaigns/${uuid}`;
 
     return await this.get<PostingCampaign>(path);
