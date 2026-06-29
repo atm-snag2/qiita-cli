@@ -313,10 +313,10 @@ export class QiitaApi {
     isPrivate: boolean;
     organizationUrlName: string | null;
     slide: boolean;
-    postingCampaignUuid: string | null | undefined;
-    agreedPostingCampaignTerm: boolean | undefined;
+    postingCampaignUuid?: string | null;
+    agreedPostingCampaignTerm?: boolean;
   }) {
-    const data = JSON.stringify({
+    const payload: Record<string, unknown> = {
       body: rawBody,
       title,
       tags: tags.map((name) => {
@@ -328,9 +328,14 @@ export class QiitaApi {
       private: isPrivate,
       organization_url_name: organizationUrlName,
       slide,
-      posting_campaign_uuid: postingCampaignUuid,
-      agreed_posting_campaign_term: agreedPostingCampaignTerm,
-    });
+    };
+    if (postingCampaignUuid !== undefined) {
+      payload.posting_campaign_uuid = postingCampaignUuid;
+    }
+    if (agreedPostingCampaignTerm !== undefined) {
+      payload.agreed_posting_campaign_term = agreedPostingCampaignTerm;
+    }
+    const data = JSON.stringify(payload);
 
     const path = `/api/v2/items`;
 
@@ -358,8 +363,8 @@ export class QiitaApi {
     isPrivate: boolean;
     organizationUrlName: string | null;
     slide: boolean;
-    postingCampaignUuid: string | null | undefined;
-    agreedPostingCampaignTerm: boolean | undefined;
+    postingCampaignUuid?: string | null;
+    agreedPostingCampaignTerm?: boolean;
     commitMessage?: string;
   }) {
     const payload: Record<string, unknown> = {
@@ -374,11 +379,15 @@ export class QiitaApi {
       private: isPrivate,
       organization_url_name: organizationUrlName,
       slide,
-      posting_campaign_uuid: postingCampaignUuid,
-      agreed_posting_campaign_term: agreedPostingCampaignTerm,
     };
     if (commitMessage !== undefined) {
       payload.commit_message = commitMessage;
+    }
+    if (postingCampaignUuid !== undefined) {
+      payload.posting_campaign_uuid = postingCampaignUuid;
+    }
+    if (agreedPostingCampaignTerm !== undefined) {
+      payload.agreed_posting_campaign_term = agreedPostingCampaignTerm;
     }
     const data = JSON.stringify(payload);
 

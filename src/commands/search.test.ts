@@ -61,6 +61,7 @@ describe("search", () => {
         created_at: "2023-01-01T00:00:00Z",
         updated_at: "2023-01-01T00:00:00Z",
         slide: false,
+        posting_campaign_uuid: null,
       },
       {
         body: "Mock body 2",
@@ -74,6 +75,7 @@ describe("search", () => {
         created_at: "2023-01-02T00:00:00Z",
         updated_at: "2023-01-02T00:00:00Z",
         slide: false,
+        posting_campaign_uuid: null,
       },
     ];
 
@@ -117,6 +119,7 @@ describe("search", () => {
         created_at: "2023-01-01T00:00:00Z",
         updated_at: "2023-01-01T00:00:00Z",
         slide: false,
+        posting_campaign_uuid: null,
       },
     ];
 
@@ -133,6 +136,7 @@ describe("search", () => {
             url: mockItems[0].url,
             tags: mockItems[0].tags.map((t) => t.name),
             organization_url_name: mockItems[0].organization_url_name,
+            posting_campaign_uuid: mockItems[0].posting_campaign_uuid,
           },
         ],
         null,
