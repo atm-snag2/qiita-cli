@@ -46,6 +46,7 @@ export const search = async (argv: string[]) => {
           url: item.url,
           tags: item.tags.map((t) => t.name),
           organization_url_name: item.organization_url_name,
+          posting_campaign_uuid: item.posting_campaign_uuid,
         })),
         null,
         2, // Pretty print JSON
