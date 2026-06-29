@@ -37,6 +37,7 @@ export const get = async (argv: string[]) => {
             slide: item.slide,
             created_at: item.created_at,
             updated_at: item.updated_at,
+            posting_campaign_uuid: item.posting_campaign_uuid,
           },
           null,
           2,

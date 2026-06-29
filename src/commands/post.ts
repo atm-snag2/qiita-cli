@@ -15,6 +15,8 @@ export const post = async (argv: string[]) => {
       "--organization": String,
       "--slide": Boolean,
       "--commit-message": String,
+      "--posting-campaign-uuid": String,
+      "--agreed-posting-campaign-term": Boolean,
       "--json": Boolean,
     },
     { argv, permissive: true },
@@ -33,7 +35,24 @@ export const post = async (argv: string[]) => {
   const organizationUrlName = args["--organization"];
   const slide = args["--slide"];
   const commitMessage = args["--commit-message"];
+  const postingCampaignUuidRaw = args["--posting-campaign-uuid"];
+  const postingCampaignUuid =
+    postingCampaignUuidRaw === undefined
+      ? undefined
+      : postingCampaignUuidRaw === ""
+        ? null
+        : postingCampaignUuidRaw;
+  const agreedPostingCampaignTerm = args["--agreed-posting-campaign-term"];
   const outputJson = args["--json"] || false;
+
+  if (typeof postingCampaignUuid === "string" && !agreedPostingCampaignTerm) {
+    console.error(
+      chalk.red(
+        "Error: --agreed-posting-campaign-term is required when --posting-campaign-uuid is specified.",
+      ),
+    );
+    process.exit(1);
+  }
 
   // Read from stdin if body is not provided and stdin is not a TTY
   if (!body && !process.stdin.isTTY) {
@@ -66,7 +85,7 @@ export const post = async (argv: string[]) => {
       // To support partial updates, we fetch the existing item first
       const existingItem = await qiitaApi.getItem(id);
 
-      responseItem = await qiitaApi.patchItem({
+      const patchArgs: Parameters<typeof qiitaApi.patchItem>[0] = {
         uuid: id,
         rawBody: body,
         title: title ?? existingItem.title,
@@ -80,7 +99,27 @@ export const post = async (argv: string[]) => {
             : existingItem.organization_url_name,
         slide: slide !== undefined ? slide : existingItem.slide,
         commitMessage,
-      });
+      };
+      if (postingCampaignUuid !== undefined) {
+        patchArgs.postingCampaignUuid = postingCampaignUuid;
+      }
+      if (
+        typeof postingCampaignUuid === "string" &&
+        agreedPostingCampaignTerm
+      ) {
+        patchArgs.agreedPostingCampaignTerm = true;
+      }
+
+      if (typeof postingCampaignUuid === "string" && patchArgs.isPrivate) {
+        console.error(
+          chalk.red(
+            "Error: 限定共有記事に投稿キャンペーンを紐付けることはできません",
+          ),
+        );
+        process.exit(1);
+      }
+
+      responseItem = await qiitaApi.patchItem(patchArgs);
 
       if (!outputJson) {
         // No log message for update, only URL at the end
@@ -96,14 +135,34 @@ export const post = async (argv: string[]) => {
         process.exit(1);
       }
 
-      responseItem = await qiitaApi.postItem({
+      const postArgs: Parameters<typeof qiitaApi.postItem>[0] = {
         rawBody: body,
         title,
         tags: tagsStr.split(",").map((t) => t.trim()),
         isPrivate: isPrivate ?? true, // Default to private for safety
         organizationUrlName: organizationUrlName ?? null,
         slide: slide ?? false,
-      });
+      };
+      if (postingCampaignUuid !== undefined) {
+        postArgs.postingCampaignUuid = postingCampaignUuid;
+      }
+      if (
+        typeof postingCampaignUuid === "string" &&
+        agreedPostingCampaignTerm
+      ) {
+        postArgs.agreedPostingCampaignTerm = true;
+      }
+
+      if (typeof postingCampaignUuid === "string" && postArgs.isPrivate) {
+        console.error(
+          chalk.red(
+            "Error: 限定共有記事に投稿キャンペーンを紐付けることはできません",
+          ),
+        );
+        process.exit(1);
+      }
+
+      responseItem = await qiitaApi.postItem(postArgs);
 
       if (!outputJson) {
         // No log message for create, only URL at the end

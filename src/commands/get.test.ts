@@ -23,6 +23,7 @@ describe("get", () => {
     created_at: "2023-01-01T00:00:00Z",
     updated_at: "2023-01-01T00:00:00Z",
     slide: false,
+    posting_campaign_uuid: "910c5be7d2d6a043a12b",
   };
 
   beforeEach(() => {
@@ -89,6 +90,7 @@ describe("get", () => {
           slide: mockItem.slide,
           created_at: mockItem.created_at,
           updated_at: mockItem.updated_at,
+          posting_campaign_uuid: mockItem.posting_campaign_uuid,
         },
         null,
         2,

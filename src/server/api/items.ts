@@ -174,6 +174,15 @@ const itemsUpdate = async (req: Express.Request, res: Express.Response) => {
     if (!result.id && itemId === "post") {
       if (!basename) throw new Error("basename is undefined");
 
+      const campaignArgs: {
+        postingCampaignUuid?: string | null;
+        agreedPostingCampaignTerm?: boolean;
+      } = {};
+      if (result.postingCampaignUuid !== null) {
+        campaignArgs.postingCampaignUuid = result.postingCampaignUuid;
+        campaignArgs.agreedPostingCampaignTerm =
+          result.agreedPostingCampaignTerm;
+      }
       item = await qiitaApi.postItem({
         rawBody: result.rawBody,
         tags: result.tags,
@@ -181,14 +190,22 @@ const itemsUpdate = async (req: Express.Request, res: Express.Response) => {
         isPrivate: result.secret,
         organizationUrlName: result.organizationUrlName,
         slide: result.slide,
-        postingCampaignUuid: result.postingCampaignUuid,
-        agreedPostingCampaignTerm: result.agreedPostingCampaignTerm,
+        ...campaignArgs,
       });
       if (item) {
         fileSystemRepo.updateItemUuid(basename, item.id);
         output.uuid = item.id;
       }
     } else if (result.id) {
+      const campaignArgs: {
+        postingCampaignUuid?: string | null;
+        agreedPostingCampaignTerm?: boolean;
+      } = {};
+      if (result.postingCampaignUuid !== null) {
+        campaignArgs.postingCampaignUuid = result.postingCampaignUuid;
+        campaignArgs.agreedPostingCampaignTerm =
+          result.agreedPostingCampaignTerm;
+      }
       item = await qiitaApi.patchItem({
         rawBody: result.rawBody,
         tags: result.tags,
@@ -197,8 +214,7 @@ const itemsUpdate = async (req: Express.Request, res: Express.Response) => {
         isPrivate: result.secret,
         organizationUrlName: result.organizationUrlName,
         slide: result.slide,
-        postingCampaignUuid: result.postingCampaignUuid,
-        agreedPostingCampaignTerm: result.agreedPostingCampaignTerm,
+        ...campaignArgs,
       });
     } else {
       throw new Error("Unknown Error");

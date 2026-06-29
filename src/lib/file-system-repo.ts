@@ -28,8 +28,8 @@ class FileContent {
     rawBody,
     slide,
     ignorePublish = false,
-    postingCampaignUuid,
-    agreedPostingCampaignTerm,
+    postingCampaignUuid = null,
+    agreedPostingCampaignTerm = false,
   }: {
     title: string;
     tags: string[];
@@ -40,8 +40,8 @@ class FileContent {
     rawBody: string;
     slide: boolean;
     ignorePublish: boolean;
-    postingCampaignUuid: string | null | undefined;
-    agreedPostingCampaignTerm: boolean | undefined;
+    postingCampaignUuid?: string | null;
+    agreedPostingCampaignTerm?: boolean;
   }) {
     this.title = title;
     this.tags = tags;
@@ -107,7 +107,6 @@ class FileContent {
       slide: item.slide,
       ignorePublish: false,
       postingCampaignUuid: item.posting_campaign_uuid,
-      // The response has no agreement state, so treat a linked campaign as already agreed
       agreedPostingCampaignTerm: item.posting_campaign_uuid !== null,
     });
   }

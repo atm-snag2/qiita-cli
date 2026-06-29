@@ -13,6 +13,7 @@ const mockItem: Item = {
   created_at: "2023-01-01T00:00:00Z",
   updated_at: "2023-01-01T00:00:00Z",
   slide: false,
+  posting_campaign_uuid: null,
 };
 
 const makeApi = () =>
@@ -88,6 +89,111 @@ describe("QiitaApi", () => {
       const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
       expect(url).toContain("/api/v2/items/mock_id");
       expect(options.method).toBe("PATCH");
+    });
+
+    it("posting_campaign_uuid 未指定でリクエストボディに含めない", async () => {
+      mockFetch(mockItem);
+      const api = makeApi();
+
+      await api.patchItem({
+        uuid: "mock_id",
+        rawBody: "body",
+        title: "title",
+        tags: ["tag"],
+        isPrivate: false,
+        organizationUrlName: null,
+        slide: false,
+      });
+
+      const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody).not.toHaveProperty("posting_campaign_uuid");
+      expect(sentBody).not.toHaveProperty("agreed_posting_campaign_term");
+    });
+
+    it("posting_campaign_uuid と agreed_posting_campaign_term を送信できる", async () => {
+      mockFetch(mockItem);
+      const api = makeApi();
+
+      await api.patchItem({
+        uuid: "mock_id",
+        rawBody: "body",
+        title: "title",
+        tags: ["tag"],
+        isPrivate: false,
+        organizationUrlName: null,
+        slide: false,
+        postingCampaignUuid: "910c5be7d2d6a043a12b",
+        agreedPostingCampaignTerm: true,
+      });
+
+      const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody.posting_campaign_uuid).toBe("910c5be7d2d6a043a12b");
+      expect(sentBody.agreed_posting_campaign_term).toBe(true);
+    });
+
+    it("posting_campaign_uuid に null を送信して登録解除できる", async () => {
+      mockFetch(mockItem);
+      const api = makeApi();
+
+      await api.patchItem({
+        uuid: "mock_id",
+        rawBody: "body",
+        title: "title",
+        tags: ["tag"],
+        isPrivate: false,
+        organizationUrlName: null,
+        slide: false,
+        postingCampaignUuid: null,
+      });
+
+      const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody.posting_campaign_uuid).toBeNull();
+      expect(sentBody).not.toHaveProperty("agreed_posting_campaign_term");
+    });
+  });
+
+  describe("postItem", () => {
+    it("posting_campaign_uuid 未指定でリクエストボディに含めない", async () => {
+      mockFetch(mockItem);
+      const api = makeApi();
+
+      await api.postItem({
+        rawBody: "body",
+        title: "title",
+        tags: ["tag"],
+        isPrivate: false,
+        organizationUrlName: null,
+        slide: false,
+      });
+
+      const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody).not.toHaveProperty("posting_campaign_uuid");
+      expect(sentBody).not.toHaveProperty("agreed_posting_campaign_term");
+    });
+
+    it("posting_campaign_uuid と agreed_posting_campaign_term を送信できる", async () => {
+      mockFetch(mockItem);
+      const api = makeApi();
+
+      await api.postItem({
+        rawBody: "body",
+        title: "title",
+        tags: ["tag"],
+        isPrivate: false,
+        organizationUrlName: null,
+        slide: false,
+        postingCampaignUuid: "910c5be7d2d6a043a12b",
+        agreedPostingCampaignTerm: true,
+      });
+
+      const [, options] = (global.fetch as jest.Mock).mock.calls[0];
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody.posting_campaign_uuid).toBe("910c5be7d2d6a043a12b");
+      expect(sentBody.agreed_posting_campaign_term).toBe(true);
     });
   });
 });

@@ -22,6 +22,11 @@ COMMAND:
     --private             限定共有にする場合に指定
     --organization <org>  組織に紐付ける場合に指定
     --slide               スライドモードを有効化
+    --commit-message <m>  更新時のコミットメッセージ
+    --posting-campaign-uuid <uuid>
+                          投稿キャンペーンのUUID (空文字列で登録解除)
+    --agreed-posting-campaign-term
+                          投稿キャンペーン規約への同意 (UUID指定時に必須)
     --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示

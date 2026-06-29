@@ -92,6 +92,15 @@ export const publish = async (argv: string[]) => {
 
   const promises = targetItems.map(async (item) => {
     let responseItem: Item;
+    const campaignArgs: {
+      postingCampaignUuid?: string | null;
+      agreedPostingCampaignTerm?: boolean;
+    } = {};
+    if (item.postingCampaignUuid !== null) {
+      campaignArgs.postingCampaignUuid = item.postingCampaignUuid;
+      campaignArgs.agreedPostingCampaignTerm = item.agreedPostingCampaignTerm;
+    }
+
     if (item.id) {
       responseItem = await qiitaApi.patchItem({
         rawBody: item.rawBody,
@@ -101,8 +110,7 @@ export const publish = async (argv: string[]) => {
         isPrivate: item.secret,
         organizationUrlName: item.organizationUrlName,
         slide: item.slide,
-        postingCampaignUuid: item.postingCampaignUuid,
-        agreedPostingCampaignTerm: item.agreedPostingCampaignTerm,
+        ...campaignArgs,
       });
 
       console.log(`Updated: ${item.name} -> ${item.id}`);
@@ -114,8 +122,7 @@ export const publish = async (argv: string[]) => {
         isPrivate: item.secret,
         organizationUrlName: item.organizationUrlName,
         slide: item.slide,
-        postingCampaignUuid: item.postingCampaignUuid,
-        agreedPostingCampaignTerm: item.agreedPostingCampaignTerm,
+        ...campaignArgs,
       });
       await fileSystemRepo.updateItemUuid(item.name, responseItem.id);
 

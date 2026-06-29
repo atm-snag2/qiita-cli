@@ -154,8 +154,8 @@ tags: []
 ---`);
 
         return instance.loadItemByBasename(basename).then((item) => {
-          expect(item?.postingCampaignUuid).toBeUndefined();
-          expect(item?.agreedPostingCampaignTerm).toBeUndefined();
+          expect(item?.postingCampaignUuid).toBeNull();
+          expect(item?.agreedPostingCampaignTerm).toBe(false);
         });
       });
 
@@ -549,6 +549,97 @@ updated
           });
         });
       });
+    });
+  });
+
+  describe("loadItemByBasename() with posting campaign fields", () => {
+    it("loads posting_campaign_uuid and agreed_posting_campaign_term from frontmatter", async () => {
+      const dataRootDir = "data_root_dir";
+      const subDir = "public";
+      const instance = new FileSystemRepo({ dataRootDir });
+      const basename = "abc";
+      const id = "this_is_id";
+
+      const mockFs = fs as jest.Mocked<typeof fs>;
+      mockFs.readdir.mockResolvedValueOnce([`${basename}.md`] as any[]);
+      mockFs.readFile.mockResolvedValue(`---
+id: ${id}
+tags: []
+slide: false
+posting_campaign_uuid: 910c5be7d2d6a043a12b
+agreed_posting_campaign_term: true
+---`);
+
+      const item = await instance.loadItemByBasename(basename);
+
+      expect(item?.postingCampaignUuid).toBe("910c5be7d2d6a043a12b");
+      expect(item?.agreedPostingCampaignTerm).toBe(true);
+      expect(mockFs.readFile.mock.calls[0][0]).toBe(
+        `${dataRootDir}/${subDir}/${basename}.md`,
+      );
+    });
+
+    it("defaults posting_campaign_uuid to null and agreed_posting_campaign_term to false when frontmatter omits them", async () => {
+      const dataRootDir = "data_root_dir";
+      const instance = new FileSystemRepo({ dataRootDir });
+      const basename = "abc";
+      const id = "this_is_id";
+
+      const mockFs = fs as jest.Mocked<typeof fs>;
+      mockFs.readdir.mockResolvedValueOnce([`${basename}.md`] as any[]);
+      mockFs.readFile.mockResolvedValue(`---
+id: ${id}
+tags: []
+slide: false
+---`);
+
+      const item = await instance.loadItemByBasename(basename);
+
+      expect(item?.postingCampaignUuid).toBeNull();
+      expect(item?.agreedPostingCampaignTerm).toBe(false);
+    });
+  });
+
+  describe("saveItem() with posting campaign", () => {
+    it("writes posting_campaign_uuid from Item response and resets agreed_posting_campaign_term to false", async () => {
+      const dataRootDir = "data_root_dir";
+      const instance = new FileSystemRepo({ dataRootDir });
+      const id = "this_is_id";
+      const item: Item = {
+        body: "test",
+        id,
+        url: "https://qiita.com/user/items/this_is_id",
+        private: false,
+        coediting: false,
+        tags: [],
+        title: "title",
+        created_at: "",
+        updated_at: "",
+        organization_url_name: null,
+        slide: false,
+        posting_campaign_uuid: "910c5be7d2d6a043a12b",
+      };
+
+      const mockFs = fs as jest.Mocked<typeof fs>;
+      mockFs.readdir.mockResolvedValueOnce([]);
+      mockFs.writeFile.mockResolvedValue();
+      mockFs.readFile.mockResolvedValue(`---
+id: ${id}
+tags: []
+---`);
+
+      await instance.saveItem(item);
+
+      const remoteWrite = mockFs.writeFile.mock.calls.find((c) =>
+        (c[0] as string).includes(`/.remote/${id}.md`),
+      );
+      expect(remoteWrite).toBeDefined();
+      expect(remoteWrite![1] as string).toContain(
+        "posting_campaign_uuid: 910c5be7d2d6a043a12b",
+      );
+      expect(remoteWrite![1] as string).toContain(
+        "agreed_posting_campaign_term: false",
+      );
     });
   });
 

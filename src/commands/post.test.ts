@@ -24,6 +24,7 @@ describe("post", () => {
     created_at: "2023-01-01T00:00:00Z",
     updated_at: "2023-01-01T00:00:00Z",
     slide: false,
+    posting_campaign_uuid: null,
   };
 
   beforeEach(() => {
@@ -209,6 +210,216 @@ describe("post", () => {
         commitMessage: "コメント機能を追加",
       }),
     );
+  });
+
+  it("新規作成：--posting-campaign-uuid と --agreed-posting-campaign-term で投稿キャンペーンに紐付けできる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: false,
+    });
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--private",
+      "false",
+      "--posting-campaign-uuid",
+      "910c5be7d2d6a043a12b",
+      "--agreed-posting-campaign-term",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        postingCampaignUuid: "910c5be7d2d6a043a12b",
+        agreedPostingCampaignTerm: true,
+      }),
+    );
+  });
+
+  it("新規作成：--posting-campaign-uuid を指定したのに --agreed-posting-campaign-term がないとエラー", async () => {
+    await expect(
+      post([
+        "--title",
+        "Mock Title",
+        "--tags",
+        "test",
+        "--body",
+        "Mock Body",
+        "--posting-campaign-uuid",
+        "910c5be7d2d6a043a12b",
+      ]),
+    ).rejects.toThrow("process.exit() was called.");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining("--agreed-posting-campaign-term"),
+    );
+    expect(processExitSpy).toHaveBeenCalledWith(1);
+    expect(mockQiitaApi.postItem).not.toHaveBeenCalled();
+  });
+
+  it("新規作成：--posting-campaign-uuid 指定 + --private 未指定 (デフォルト限定共有) はエラー", async () => {
+    await expect(
+      post([
+        "--title",
+        "Mock Title",
+        "--tags",
+        "test",
+        "--body",
+        "Mock Body",
+        "--posting-campaign-uuid",
+        "910c5be7d2d6a043a12b",
+        "--agreed-posting-campaign-term",
+      ]),
+    ).rejects.toThrow("process.exit() was called.");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "限定共有記事に投稿キャンペーンを紐付けることはできません",
+      ),
+    );
+    expect(processExitSpy).toHaveBeenCalledWith(1);
+    expect(mockQiitaApi.postItem).not.toHaveBeenCalled();
+  });
+
+  it("新規作成：--posting-campaign-uuid 指定 + --private true はエラー", async () => {
+    await expect(
+      post([
+        "--title",
+        "Mock Title",
+        "--tags",
+        "test",
+        "--body",
+        "Mock Body",
+        "--private",
+        "true",
+        "--posting-campaign-uuid",
+        "910c5be7d2d6a043a12b",
+        "--agreed-posting-campaign-term",
+      ]),
+    ).rejects.toThrow("process.exit() was called.");
+    expect(processExitSpy).toHaveBeenCalledWith(1);
+    expect(mockQiitaApi.postItem).not.toHaveBeenCalled();
+  });
+
+  it("更新：既存記事が限定共有で --posting-campaign-uuid 指定するとエラー", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: true,
+    });
+
+    await expect(
+      post([
+        "--id",
+        "mock_id",
+        "--body",
+        "Updated Body",
+        "--posting-campaign-uuid",
+        "910c5be7d2d6a043a12b",
+        "--agreed-posting-campaign-term",
+      ]),
+    ).rejects.toThrow("process.exit() was called.");
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "限定共有記事に投稿キャンペーンを紐付けることはできません",
+      ),
+    );
+    expect(mockQiitaApi.patchItem).not.toHaveBeenCalled();
+  });
+
+  it("更新：既存記事が限定共有でも --private false 同時指定なら通る", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: true,
+    });
+    mockQiitaApi.patchItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: false,
+    });
+
+    await post([
+      "--id",
+      "mock_id",
+      "--body",
+      "Updated Body",
+      "--private",
+      "false",
+      "--posting-campaign-uuid",
+      "910c5be7d2d6a043a12b",
+      "--agreed-posting-campaign-term",
+    ]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isPrivate: false,
+        postingCampaignUuid: "910c5be7d2d6a043a12b",
+        agreedPostingCampaignTerm: true,
+      }),
+    );
+  });
+
+  it("新規作成：--private false + --posting-campaign-uuid なら通る", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce({
+      ...mockItem,
+      private: false,
+    });
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--private",
+      "false",
+      "--posting-campaign-uuid",
+      "910c5be7d2d6a043a12b",
+      "--agreed-posting-campaign-term",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isPrivate: false,
+        postingCampaignUuid: "910c5be7d2d6a043a12b",
+        agreedPostingCampaignTerm: true,
+      }),
+    );
+  });
+
+  it("更新：--posting-campaign-uuid に空文字列を渡すと null で登録解除する", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce(mockItem);
+
+    await post([
+      "--id",
+      "mock_id",
+      "--body",
+      "Updated Body",
+      "--posting-campaign-uuid",
+      "",
+    ]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        postingCampaignUuid: null,
+      }),
+    );
+    expect(mockQiitaApi.patchItem.mock.calls[0][0]).not.toHaveProperty(
+      "agreedPostingCampaignTerm",
+    );
+  });
+
+  it("更新：campaign 関連オプションを指定しないと送信されない", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce(mockItem);
+
+    await post(["--id", "mock_id", "--body", "Updated Body"]);
+
+    const call = mockQiitaApi.patchItem.mock.calls[0][0];
+    expect(call).not.toHaveProperty("postingCampaignUuid");
+    expect(call).not.toHaveProperty("agreedPostingCampaignTerm");
   });
 
   it("JSON形式で出力できる", async () => {
