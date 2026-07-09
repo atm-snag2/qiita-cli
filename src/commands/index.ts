@@ -14,9 +14,11 @@ import { get } from "./get";
 import { post } from "./post";
 import { comment } from "./comment";
 import { reaction } from "./reaction";
+import { api } from "./api";
 
 export const exec = async (commandName: string, commandArgs: string[]) => {
   const commands = {
+    api,
     init,
     login,
     new: newArticles,
