@@ -14,6 +14,16 @@ import { qiitaApiDebugger } from "./lib/debugger";
 
 export * from "./errors";
 
+export interface Reaction {
+  name: string;
+  image_url: string | null;
+  created_at: string;
+  user: {
+    id: string;
+    name: string;
+  };
+}
+
 export interface Comment {
   id: string;
   body: string;
@@ -398,6 +408,40 @@ export class QiitaApi {
   async deleteComment(commentId: string) {
     const path = `/api/v2/comments/${commentId}`;
     return await this.delete(path);
+  }
+
+  async getItemReactions(itemId: string) {
+    const path = `/api/v2/items/${itemId}/reactions`;
+    return await this.get<Reaction[]>(path);
+  }
+
+  async postItemReaction(itemId: string, name: string) {
+    const path = `/api/v2/items/${itemId}/reactions`;
+    return await this.post<Reaction>(path, {
+      body: JSON.stringify({ name }),
+    });
+  }
+
+  async getCommentReactions(commentId: string) {
+    const path = `/api/v2/comments/${commentId}/reactions`;
+    return await this.get<Reaction[]>(path);
+  }
+
+  async postCommentReaction(commentId: string, name: string) {
+    const path = `/api/v2/comments/${commentId}/reactions`;
+    return await this.post<Reaction>(path, {
+      body: JSON.stringify({ name }),
+    });
+  }
+
+  async deleteItemReaction(itemId: string, reactionName: string) {
+    const path = `/api/v2/items/${itemId}/reactions/${reactionName}`;
+    return await this.delete<void>(path);
+  }
+
+  async deleteCommentReaction(commentId: string, reactionName: string) {
+    const path = `/api/v2/comments/${commentId}/reactions/${reactionName}`;
+    return await this.delete<void>(path);
   }
 
   async getAssetUrls() {

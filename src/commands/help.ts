@@ -29,6 +29,19 @@ COMMAND:
     --agreed-posting-campaign-term
                           投稿キャンペーン規約への同意 (UUID指定時に必須)
     --json                結果をJSON形式で出力
+  reaction list <article_id>
+                          記事のリアクション一覧を表示
+  reaction list-comment <comment_id>
+                          コメントのリアクション一覧を表示
+  reaction create <article_id> --name <emoji_name>
+                          記事にリアクションを追加
+  reaction create-comment <comment_id> --name <emoji_name>
+                          コメントにリアクションを追加
+  reaction delete <article_id> --name <emoji_name>
+                          記事のリアクションを削除
+  reaction delete-comment <comment_id> --name <emoji_name>
+                          コメントのリアクションを削除
+    --json                結果をJSON形式で出力
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 

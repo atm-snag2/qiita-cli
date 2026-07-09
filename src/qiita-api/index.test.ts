@@ -1,5 +1,5 @@
 import { QiitaApi } from "./index";
-import type { Item } from "./index";
+import type { Item, Reaction } from "./index";
 
 const mockItem: Item = {
   body: "Mock Body",
@@ -194,6 +194,95 @@ describe("QiitaApi", () => {
       const sentBody = JSON.parse(options.body);
       expect(sentBody.posting_campaign_uuid).toBe("910c5be7d2d6a043a12b");
       expect(sentBody.agreed_posting_campaign_term).toBe(true);
+    });
+  });
+
+  const mockReaction: Reaction = {
+    name: "thumbsup",
+    image_url: "https://cdn.qiita.com/emoji/thumbsup.png",
+    created_at: "2023-01-01T00:00:00Z",
+    user: { id: "mock_user", name: "Mock User" },
+  };
+
+  describe("getItemReactions", () => {
+    it("/api/v2/items/:id/reactions に GET リクエストを送る", async () => {
+      mockFetch([mockReaction]);
+      const api = makeApi();
+
+      await api.getItemReactions("mock_item_id");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/items/mock_item_id/reactions");
+      expect(options.method).toBe("GET");
+    });
+  });
+
+  describe("postItemReaction", () => {
+    it("/api/v2/items/:id/reactions に name を POST する", async () => {
+      mockFetch(mockReaction);
+      const api = makeApi();
+
+      await api.postItemReaction("mock_item_id", "thumbsup");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/items/mock_item_id/reactions");
+      expect(options.method).toBe("POST");
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody.name).toBe("thumbsup");
+    });
+  });
+
+  describe("getCommentReactions", () => {
+    it("/api/v2/comments/:id/reactions に GET リクエストを送る", async () => {
+      mockFetch([mockReaction]);
+      const api = makeApi();
+
+      await api.getCommentReactions("mock_comment_id");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/comments/mock_comment_id/reactions");
+      expect(options.method).toBe("GET");
+    });
+  });
+
+  describe("postCommentReaction", () => {
+    it("/api/v2/comments/:id/reactions に name を POST する", async () => {
+      mockFetch(mockReaction);
+      const api = makeApi();
+
+      await api.postCommentReaction("mock_comment_id", "heart");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/comments/mock_comment_id/reactions");
+      expect(options.method).toBe("POST");
+      const sentBody = JSON.parse(options.body);
+      expect(sentBody.name).toBe("heart");
+    });
+  });
+
+  describe("deleteItemReaction", () => {
+    it("/api/v2/items/:id/reactions/:name に DELETE リクエストを送る", async () => {
+      mockFetch("", 204);
+      const api = makeApi();
+
+      await api.deleteItemReaction("mock_item_id", "thumbsup");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/items/mock_item_id/reactions/thumbsup");
+      expect(options.method).toBe("DELETE");
+    });
+  });
+
+  describe("deleteCommentReaction", () => {
+    it("/api/v2/comments/:id/reactions/:name に DELETE リクエストを送る", async () => {
+      mockFetch("", 204);
+      const api = makeApi();
+
+      await api.deleteCommentReaction("mock_comment_id", "heart");
+
+      const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+      expect(url).toContain("/api/v2/comments/mock_comment_id/reactions/heart");
+      expect(options.method).toBe("DELETE");
     });
   });
 
