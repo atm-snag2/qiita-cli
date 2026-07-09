@@ -13,6 +13,7 @@ import { search } from "./search";
 import { get } from "./get";
 import { post } from "./post";
 import { comment } from "./comment";
+import { reaction } from "./reaction";
 
 export const exec = async (commandName: string, commandArgs: string[]) => {
   const commands = {
@@ -29,6 +30,7 @@ export const exec = async (commandName: string, commandArgs: string[]) => {
     get,
     post,
     comment,
+    reaction,
     "--help": help,
     "--version": version,
   };
