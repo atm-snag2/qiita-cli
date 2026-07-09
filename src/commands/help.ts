@@ -42,6 +42,8 @@ COMMAND:
   reaction delete-comment <comment_id> --name <emoji_name>
                           コメントのリアクションを削除
     --json                結果をJSON形式で出力
+  api <method> <path> [--data <json>]
+                          任意のAPI v2エンドポイントにリクエスト
   version                 Qiita CLIのバージョンを表示
   help                    ヘルプを表示
 

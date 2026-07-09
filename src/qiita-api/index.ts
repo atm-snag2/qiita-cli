@@ -209,6 +209,16 @@ export class QiitaApi {
     });
   }
 
+  async rawRequest(method: string, path: string, body?: string) {
+    const upperMethod = method.toUpperCase();
+    const options: RequestInit = { method: upperMethod };
+    if (body && upperMethod !== "GET" && upperMethod !== "HEAD") {
+      options.body = body;
+    }
+    const url = this.generateApiUrl(path);
+    return await this.request(url, options);
+  }
+
   async authenticatedUser() {
     return await this.get<{ id: string }>("/api/v2/authenticated_user");
   }
