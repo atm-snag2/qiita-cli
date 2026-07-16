@@ -21,6 +21,7 @@ describe("post", () => {
     title: "Mock Title",
     organization_url_name: null,
     coediting: false,
+    group_url_name: null,
     created_at: "2023-01-01T00:00:00Z",
     updated_at: "2023-01-01T00:00:00Z",
     slide: false,
@@ -100,6 +101,8 @@ describe("post", () => {
       isPrivate: true,
       organizationUrlName: null,
       slide: false,
+      coediting: false,
+      groupUrlName: null,
     });
     expect(consoleLogSpy).toHaveBeenCalledWith(mockItem.url);
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
@@ -121,8 +124,6 @@ describe("post", () => {
       title: mockItem.title,
       tags: ["test"],
       isPrivate: mockItem.private,
-      organizationUrlName: mockItem.organization_url_name,
-      slide: mockItem.slide,
       commitMessage: undefined,
     });
     expect(consoleLogSpy).toHaveBeenCalledTimes(1);
@@ -420,6 +421,97 @@ describe("post", () => {
     const call = mockQiitaApi.patchItem.mock.calls[0][0];
     expect(call).not.toHaveProperty("postingCampaignUuid");
     expect(call).not.toHaveProperty("agreedPostingCampaignTerm");
+  });
+
+  it("新規作成：--coediting で共同編集モードを有効にできる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce({
+      ...mockItem,
+      coediting: true,
+    });
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--coediting",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({ coediting: true }),
+    );
+  });
+
+  it("新規作成：--group でグループを指定できる", async () => {
+    mockQiitaApi.postItem.mockResolvedValueOnce({
+      ...mockItem,
+      group_url_name: "dev-team",
+    });
+
+    await post([
+      "--title",
+      "Mock Title",
+      "--tags",
+      "test",
+      "--body",
+      "Mock Body",
+      "--group",
+      "dev-team",
+    ]);
+
+    expect(mockQiitaApi.postItem).toHaveBeenCalledWith(
+      expect.objectContaining({ groupUrlName: "dev-team" }),
+    );
+  });
+
+  it("更新：--coediting で共同編集モードを変更できる", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce({
+      ...mockItem,
+      coediting: true,
+    });
+
+    await post(["--id", "mock_id", "--body", "Updated Body", "--coediting"]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({ coediting: true }),
+    );
+  });
+
+  it("更新：--group でグループを変更できる", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce({
+      ...mockItem,
+      group_url_name: "dev-team",
+    });
+
+    await post([
+      "--id",
+      "mock_id",
+      "--body",
+      "Updated Body",
+      "--group",
+      "dev-team",
+    ]);
+
+    expect(mockQiitaApi.patchItem).toHaveBeenCalledWith(
+      expect.objectContaining({ groupUrlName: "dev-team" }),
+    );
+  });
+
+  it("更新：coediting/group/slide/organization 未指定なら送信しない", async () => {
+    mockQiitaApi.getItem.mockResolvedValueOnce(mockItem);
+    mockQiitaApi.patchItem.mockResolvedValueOnce(mockItem);
+
+    await post(["--id", "mock_id", "--body", "Updated Body"]);
+
+    const call = mockQiitaApi.patchItem.mock.calls[0][0];
+    expect(call).not.toHaveProperty("coediting");
+    expect(call).not.toHaveProperty("groupUrlName");
+    expect(call).not.toHaveProperty("slide");
+    expect(call).not.toHaveProperty("organizationUrlName");
   });
 
   it("JSON形式で出力できる", async () => {

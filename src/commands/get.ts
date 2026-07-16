@@ -34,6 +34,7 @@ export const get = async (argv: string[]) => {
             private: item.private,
             tags: item.tags,
             coediting: item.coediting,
+            group_url_name: item.group_url_name,
             slide: item.slide,
             created_at: item.created_at,
             updated_at: item.updated_at,

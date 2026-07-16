@@ -59,6 +59,7 @@ describe("ItemsRouter", () => {
     private: false,
     organization_url_name: null,
     coediting: false,
+    group_url_name: null,
     created_at: "2026-09-01T00:00:00+09:00",
     updated_at: "2026-09-01T00:00:00+09:00",
     slide: false,
