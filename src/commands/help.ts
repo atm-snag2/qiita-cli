@@ -20,6 +20,7 @@ COMMAND:
     --title <title>       記事のタイトル
     --tags <tags>         カンマ区切りのタグ
     --body <body>         記事本文 (未指定時は標準入力)
+    --body-file <file>    記事本文をファイルから読み込み (--bodyと排他)
     --private             限定共有にする場合に指定
     --organization <org>  組織に紐付ける場合に指定
     --slide               スライドモードを有効化

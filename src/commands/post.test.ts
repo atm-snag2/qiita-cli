@@ -57,7 +57,7 @@ describe("post", () => {
   it("bodyがない場合、エラーを表示して終了する", async () => {
     await expect(post([])).rejects.toThrow("process.exit() was called.");
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Error: --body is required"),
+      expect.stringContaining("--body or --body-file is required"),
     );
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
