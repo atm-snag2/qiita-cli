@@ -14,6 +14,8 @@ export const post = async (argv: string[]) => {
       "--body": String,
       "--organization": String,
       "--slide": Boolean,
+      "--coediting": Boolean,
+      "--group": String,
       "--commit-message": String,
       "--posting-campaign-uuid": String,
       "--agreed-posting-campaign-term": Boolean,
@@ -34,6 +36,8 @@ export const post = async (argv: string[]) => {
         : undefined;
   const organizationUrlName = args["--organization"];
   const slide = args["--slide"];
+  const coediting = args["--coediting"];
+  const groupUrlName = args["--group"];
   const commitMessage = args["--commit-message"];
   const postingCampaignUuidRaw = args["--posting-campaign-uuid"];
   const postingCampaignUuid =
@@ -93,13 +97,20 @@ export const post = async (argv: string[]) => {
           ? tagsStr.split(",").map((t) => t.trim())
           : existingItem.tags.map((t) => t.name),
         isPrivate: isPrivate !== undefined ? isPrivate : existingItem.private,
-        organizationUrlName:
-          organizationUrlName !== undefined
-            ? organizationUrlName
-            : existingItem.organization_url_name,
-        slide: slide !== undefined ? slide : existingItem.slide,
         commitMessage,
       };
+      if (organizationUrlName !== undefined) {
+        patchArgs.organizationUrlName = organizationUrlName;
+      }
+      if (slide !== undefined) {
+        patchArgs.slide = slide;
+      }
+      if (coediting !== undefined) {
+        patchArgs.coediting = coediting;
+      }
+      if (groupUrlName !== undefined) {
+        patchArgs.groupUrlName = groupUrlName || null;
+      }
       if (postingCampaignUuid !== undefined) {
         patchArgs.postingCampaignUuid = postingCampaignUuid;
       }
@@ -142,6 +153,8 @@ export const post = async (argv: string[]) => {
         isPrivate: isPrivate ?? true, // Default to private for safety
         organizationUrlName: organizationUrlName ?? null,
         slide: slide ?? false,
+        coediting: coediting ?? false,
+        groupUrlName: groupUrlName ?? null,
       };
       if (postingCampaignUuid !== undefined) {
         postArgs.postingCampaignUuid = postingCampaignUuid;

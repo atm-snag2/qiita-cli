@@ -58,6 +58,7 @@ export interface Item {
   title: string;
   organization_url_name: string | null;
   coediting: boolean;
+  group_url_name: string | null;
   created_at: string;
   updated_at: string;
   slide: boolean;
@@ -272,6 +273,8 @@ export class QiitaApi {
     isPrivate,
     organizationUrlName,
     slide,
+    coediting,
+    groupUrlName,
     postingCampaignUuid,
     agreedPostingCampaignTerm,
   }: {
@@ -281,6 +284,8 @@ export class QiitaApi {
     isPrivate: boolean;
     organizationUrlName: string | null;
     slide: boolean;
+    coediting?: boolean;
+    groupUrlName?: string | null;
     postingCampaignUuid?: string | null;
     agreedPostingCampaignTerm?: boolean;
   }) {
@@ -297,6 +302,12 @@ export class QiitaApi {
       organization_url_name: organizationUrlName,
       slide,
     };
+    if (coediting !== undefined) {
+      payload.coediting = coediting;
+    }
+    if (groupUrlName !== undefined) {
+      payload.group_url_name = groupUrlName;
+    }
     if (postingCampaignUuid !== undefined) {
       payload.posting_campaign_uuid = postingCampaignUuid;
     }
@@ -320,6 +331,8 @@ export class QiitaApi {
     isPrivate,
     organizationUrlName,
     slide,
+    coediting,
+    groupUrlName,
     postingCampaignUuid,
     agreedPostingCampaignTerm,
     commitMessage,
@@ -329,8 +342,10 @@ export class QiitaApi {
     title: string;
     tags: string[];
     isPrivate: boolean;
-    organizationUrlName: string | null;
-    slide: boolean;
+    organizationUrlName?: string | null;
+    slide?: boolean;
+    coediting?: boolean;
+    groupUrlName?: string | null;
     postingCampaignUuid?: string | null;
     agreedPostingCampaignTerm?: boolean;
     commitMessage?: string;
@@ -345,9 +360,19 @@ export class QiitaApi {
         };
       }),
       private: isPrivate,
-      organization_url_name: organizationUrlName,
-      slide,
     };
+    if (organizationUrlName !== undefined) {
+      payload.organization_url_name = organizationUrlName;
+    }
+    if (slide !== undefined) {
+      payload.slide = slide;
+    }
+    if (coediting !== undefined) {
+      payload.coediting = coediting;
+    }
+    if (groupUrlName !== undefined) {
+      payload.group_url_name = groupUrlName;
+    }
     if (commitMessage !== undefined) {
       payload.commit_message = commitMessage;
     }
