@@ -1,6 +1,7 @@
 import arg from "arg";
 import process from "node:process";
 import { getQiitaApiInstance } from "../lib/get-qiita-api-instance";
+import { readBody } from "../lib/read-body";
 import { Item } from "../qiita-api";
 
 export const post = async (argv: string[]) => {
@@ -12,6 +13,7 @@ export const post = async (argv: string[]) => {
       "--tags": String,
       "--private": String,
       "--body": String,
+      "--body-file": String,
       "--organization": String,
       "--slide": Boolean,
       "--coediting": Boolean,
@@ -25,7 +27,6 @@ export const post = async (argv: string[]) => {
   );
 
   const id = args["--id"];
-  let body = args["--body"];
   const title = args["--title"];
   const tagsStr = args["--tags"];
   const isPrivate =
@@ -58,27 +59,10 @@ export const post = async (argv: string[]) => {
     process.exit(1);
   }
 
-  // Read from stdin if body is not provided and stdin is not a TTY
-  if (!body && !process.stdin.isTTY) {
-    body = await new Promise<string>((resolve) => {
-      let data = "";
-      process.stdin.on("data", (chunk) => {
-        data += chunk;
-      });
-      process.stdin.on("end", () => {
-        resolve(data);
-      });
-    });
-  }
-
-  if (!body) {
-    console.error(
-      chalk.red(
-        "Error: --body is required or must be provided via standard input.",
-      ),
-    );
-    process.exit(1);
-  }
+  const body = await readBody({
+    body: args["--body"],
+    bodyFile: args["--body-file"],
+  });
 
   const qiitaApi = await getQiitaApiInstance();
   let responseItem: Item;

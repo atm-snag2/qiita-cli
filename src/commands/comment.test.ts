@@ -135,7 +135,9 @@ describe("comment", () => {
       await expect(comment(["create", "mock_article_id"])).rejects.toThrow(
         "process.exit() was called.",
       );
-      expect(consoleErrorSpy).toHaveBeenCalledWith("--body が必要です。");
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("--body or --body-file が必要です。"),
+      );
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
@@ -184,7 +186,9 @@ describe("comment", () => {
       await expect(comment(["edit", "mock_comment_id"])).rejects.toThrow(
         "process.exit() was called.",
       );
-      expect(consoleErrorSpy).toHaveBeenCalledWith("--body が必要です。");
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("--body or --body-file が必要です。"),
+      );
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
