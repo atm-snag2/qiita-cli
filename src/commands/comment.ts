@@ -1,12 +1,13 @@
 import arg from "arg";
 import process from "node:process";
 import { getQiitaApiInstance } from "../lib/get-qiita-api-instance";
+import { readBody } from "../lib/read-body";
 
 const USAGE = `Usage:
   npx qiita comment list <article_id>
   npx qiita comment get <comment_id>
-  npx qiita comment create <article_id> --body <body>
-  npx qiita comment edit <comment_id> --body <body>
+  npx qiita comment create <article_id> --body <body> [--body-file <file>]
+  npx qiita comment edit <comment_id> --body <body> [--body-file <file>]
   npx qiita comment delete <comment_id>`;
 
 export const comment = async (argv: string[]) => {
@@ -109,7 +110,7 @@ async function getComment(argv: string[]) {
 async function createComment(argv: string[]) {
   const chalk = (await import("chalk")).default;
   const args = arg(
-    { "--body": String, "--json": Boolean },
+    { "--body": String, "--body-file": String, "--json": Boolean },
     { argv, permissive: true },
   );
   const articleId = args._[0];
@@ -120,23 +121,11 @@ async function createComment(argv: string[]) {
     process.exit(1);
   }
 
-  let body = args["--body"];
-  if (!body && !process.stdin.isTTY) {
-    body = await new Promise<string>((resolve) => {
-      let data = "";
-      process.stdin.on("data", (chunk) => {
-        data += chunk;
-      });
-      process.stdin.on("end", () => {
-        resolve(data);
-      });
-    });
-  }
-
-  if (!body) {
-    console.error("--body が必要です。");
-    process.exit(1);
-  }
+  const body = await readBody({
+    body: args["--body"],
+    bodyFile: args["--body-file"],
+    errorMessage: "--body or --body-file が必要です。",
+  });
 
   const qiitaApi = await getQiitaApiInstance();
   const created = await qiitaApi.postComment(articleId, body);
@@ -152,7 +141,7 @@ async function createComment(argv: string[]) {
 async function editComment(argv: string[]) {
   const chalk = (await import("chalk")).default;
   const args = arg(
-    { "--body": String, "--json": Boolean },
+    { "--body": String, "--body-file": String, "--json": Boolean },
     { argv, permissive: true },
   );
   const commentId = args._[0];
@@ -163,23 +152,11 @@ async function editComment(argv: string[]) {
     process.exit(1);
   }
 
-  let body = args["--body"];
-  if (!body && !process.stdin.isTTY) {
-    body = await new Promise<string>((resolve) => {
-      let data = "";
-      process.stdin.on("data", (chunk) => {
-        data += chunk;
-      });
-      process.stdin.on("end", () => {
-        resolve(data);
-      });
-    });
-  }
-
-  if (!body) {
-    console.error("--body が必要です。");
-    process.exit(1);
-  }
+  const body = await readBody({
+    body: args["--body"],
+    bodyFile: args["--body-file"],
+    errorMessage: "--body or --body-file が必要です。",
+  });
 
   const qiitaApi = await getQiitaApiInstance();
   const updated = await qiitaApi.patchComment(commentId, body);
