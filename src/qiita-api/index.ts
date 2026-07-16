@@ -36,6 +36,15 @@ export interface Comment {
   };
 }
 
+export interface Group {
+  created_at: string;
+  description: string;
+  name: string;
+  private: boolean;
+  updated_at: string;
+  url_name: string;
+}
+
 export interface PostingCampaign {
   uuid: string;
   title: string;
@@ -409,6 +418,20 @@ export class QiitaApi {
     const path = `/api/v2/posting-campaigns/${uuid}`;
 
     return await this.get<PostingCampaign>(path);
+  }
+
+  async getGroups(page?: number, per?: number) {
+    const params = new URLSearchParams();
+    if (page !== undefined) {
+      params.set("page", page.toString());
+    }
+    if (per !== undefined) {
+      params.set("per_page", per.toString());
+    }
+
+    const path = `/api/v2/groups?${params}`;
+
+    return await this.get<Group[]>(path);
   }
 
   async getItem(id: string) {

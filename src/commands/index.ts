@@ -11,6 +11,7 @@ import { pull } from "./pull";
 import { version } from "./version";
 import { search } from "./search";
 import { get } from "./get";
+import { groups } from "./groups";
 import { post } from "./post";
 import { comment } from "./comment";
 import { reaction } from "./reaction";
@@ -30,6 +31,7 @@ export const exec = async (commandName: string, commandArgs: string[]) => {
     version,
     search,
     get,
+    groups,
     post,
     comment,
     reaction,
